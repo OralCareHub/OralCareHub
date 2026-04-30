@@ -1,0 +1,6 @@
+requests>=2.31.0
+python-frontmatter>=1.1.0
+markdown>=3.6
+google-api-python-client>=2.130.0
+google-auth-oauthlib>=1.2.0
+pytumblr>=0.1.2

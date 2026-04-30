@@ -1,0 +1,9 @@
+automation/config.json
+automation/credentials/
+automation/publish_log.json
+automation/__pycache__/
+automation/platforms/__pycache__/
+.DS_Store
+node_modules/
+.netlify/
+.vercel/

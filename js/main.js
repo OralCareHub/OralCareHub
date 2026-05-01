@@ -2,8 +2,9 @@
 // OralCareHub - Main JavaScript
 // ============================================
 
-// Mobile nav toggle
 document.addEventListener('DOMContentLoaded', () => {
+
+  // ---- MOBILE NAV TOGGLE ----
   const toggle = document.getElementById('navToggle');
   const links = document.getElementById('navLinks');
 
@@ -13,35 +14,64 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // Close mobile nav on link click
   document.querySelectorAll('.nav-links a').forEach(link => {
     link.addEventListener('click', () => {
       if (links) links.classList.remove('active');
     });
   });
 
-  // Track affiliate link clicks (for analytics)
+  // ---- HEADER SCROLL EFFECT ----
+  const header = document.querySelector('.header');
+  if (header) {
+    let lastScroll = 0;
+    window.addEventListener('scroll', () => {
+      const currentScroll = window.scrollY;
+      if (currentScroll > 50) {
+        header.classList.add('scrolled');
+      } else {
+        header.classList.remove('scrolled');
+      }
+      lastScroll = currentScroll;
+    }, { passive: true });
+  }
+
+  // ---- SCROLL REVEAL ANIMATIONS ----
+  const revealElements = document.querySelectorAll('.reveal, .reveal-left, .reveal-right, .reveal-scale');
+
+  if (revealElements.length > 0) {
+    const revealObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+          revealObserver.unobserve(entry.target);
+        }
+      });
+    }, {
+      threshold: 0.12,
+      rootMargin: '0px 0px -40px 0px'
+    });
+
+    revealElements.forEach(el => revealObserver.observe(el));
+  }
+
+  // ---- AFFILIATE LINK TRACKING ----
   document.querySelectorAll('[data-affiliate]').forEach(link => {
     link.addEventListener('click', (e) => {
       const affiliateId = e.currentTarget.dataset.affiliate;
       console.log(`Affiliate click: ${affiliateId}`);
-      // In production, replace with actual tracking
     });
   });
 
-  // Content locker functionality
+  // ---- CONTENT LOCKER ----
   initContentLockers();
 });
 
 // Content Locker System
-// Replace the locker action URL with your MyLead CPA locker URL
 function initContentLockers() {
   document.querySelectorAll('.unlock-btn').forEach(btn => {
     btn.addEventListener('click', (e) => {
       e.preventDefault();
       const lockerId = btn.dataset.locker;
-
-      // === REPLACE THIS URL WITH YOUR MYLEAD CPA LOCKER URL ===
       const lockerUrl = btn.dataset.lockerUrl || '#';
 
       if (lockerUrl === '#') {
@@ -49,10 +79,8 @@ function initContentLockers() {
         return;
       }
 
-      // Open the CPA locker in a new window
       const lockerWindow = window.open(lockerUrl, 'locker', 'width=600,height=500');
 
-      // Poll to check if the locker was completed
       const checkInterval = setInterval(() => {
         if (lockerWindow && lockerWindow.closed) {
           clearInterval(checkInterval);
@@ -62,7 +90,6 @@ function initContentLockers() {
     });
   });
 
-  // Check if content was previously unlocked (via localStorage)
   document.querySelectorAll('.content-locker').forEach(locker => {
     const lockerId = locker.dataset.lockerId;
     if (localStorage.getItem(`unlocked_${lockerId}`)) {
@@ -85,7 +112,6 @@ function unlockContent(lockerId) {
     content.style.userSelect = 'auto';
   }
 
-  // Remember unlock state
   localStorage.setItem(`unlocked_${lockerId}`, 'true');
 }
 

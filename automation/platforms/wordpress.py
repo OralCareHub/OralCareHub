@@ -1,6 +1,6 @@
 """
 WordPress.com Platform Publisher
-Posts articles to WordPress.com via REST API v1.1
+Posts articles to WordPress.com via REST API v1.1 using OAuth2 bearer token.
 """
 
 import requests
@@ -16,13 +16,14 @@ def publish(title, html_content, tags, config):
         title: Article title
         html_content: Article body as HTML
         tags: List of tag strings
-        config: WordPress config dict with site, username, password
+        config: WordPress config dict with site and access_token
 
     Returns:
         dict with 'success', 'url', and 'error' keys
     """
     try:
         site = config['site']
+        token = config['access_token']
 
         payload = {
             'title': title,
@@ -34,7 +35,7 @@ def publish(title, html_content, tags, config):
 
         resp = requests.post(
             f'{WP_API_BASE}/sites/{site}/posts/new',
-            auth=(config['username'], config['password']),
+            headers={'Authorization': f'Bearer {token}'},
             data=payload
         )
         resp.raise_for_status()

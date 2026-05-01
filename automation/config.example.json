@@ -26,8 +26,7 @@
     "wordpress": {
       "enabled": true,
       "site": "oralcarehub.wordpress.com",
-      "username": "YOUR_USERNAME",
-      "password": "YOUR_APP_PASSWORD"
+      "access_token": "YOUR_OAUTH2_ACCESS_TOKEN"
     }
   },
   "seo": {

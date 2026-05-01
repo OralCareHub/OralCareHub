@@ -38,6 +38,12 @@ def publish(title, html_content, tags, config):
             headers={'Authorization': f'Bearer {token}'},
             data=payload
         )
+        if resp.status_code == 401:
+            return {
+                'success': False,
+                'url': None,
+                'error': 'Access token expired or invalid — re-run the OAuth2 flow'
+            }
         resp.raise_for_status()
         data = resp.json()
 

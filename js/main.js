@@ -23,15 +23,12 @@ document.addEventListener('DOMContentLoaded', () => {
   // ---- HEADER SCROLL EFFECT ----
   const header = document.querySelector('.header');
   if (header) {
-    let lastScroll = 0;
     window.addEventListener('scroll', () => {
-      const currentScroll = window.scrollY;
-      if (currentScroll > 50) {
+      if (window.scrollY > 50) {
         header.classList.add('scrolled');
       } else {
         header.classList.remove('scrolled');
       }
-      lastScroll = currentScroll;
     }, { passive: true });
   }
 

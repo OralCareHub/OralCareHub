@@ -25,19 +25,22 @@ from datetime import datetime
 import frontmatter
 import markdown
 
-# Platform modules
-from platforms import blogger, medium, tumblr, wordpress
-
+# Lazy import platform modules — only load when actually used
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+sys.path.insert(0, SCRIPT_DIR)
 CONFIG_FILE = os.path.join(SCRIPT_DIR, 'config.json')
 LOG_FILE = os.path.join(SCRIPT_DIR, 'publish_log.json')
 
-PLATFORM_MODULES = {
-    'blogger': blogger,
-    'medium': medium,
-    'tumblr': tumblr,
-    'wordpress': wordpress,
-}
+
+def _get_platform_modules():
+    """Lazy-load platform modules to avoid import errors for uninstalled deps."""
+    from platforms import blogger, medium, tumblr, wordpress
+    return {
+        'blogger': blogger,
+        'medium': medium,
+        'tumblr': tumblr,
+        'wordpress': wordpress,
+    }
 
 
 def load_config():
@@ -128,7 +131,8 @@ def publish_article(article, config, platforms=None, dry_run=False):
     # Merge default tags with article tags
     all_tags = list(set(article['tags'] + config.get('seo', {}).get('default_tags', [])))
 
-    for platform_name, module in PLATFORM_MODULES.items():
+    platform_modules = _get_platform_modules()
+    for platform_name, module in platform_modules.items():
         platform_config = config['platforms'].get(platform_name, {})
 
         # Skip disabled platforms

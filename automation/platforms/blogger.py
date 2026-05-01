@@ -5,10 +5,6 @@ Posts articles to Google Blogger via API v3
 
 import json
 import os
-from google.oauth2.credentials import Credentials
-from google_auth_oauthlib.flow import InstalledAppFlow
-from google.auth.transport.requests import Request
-from googleapiclient.discovery import build
 
 SCOPES = ['https://www.googleapis.com/auth/blogger']
 TOKEN_FILE = os.path.join(os.path.dirname(__file__), '..', 'credentials', 'blogger_token.json')
@@ -16,6 +12,10 @@ TOKEN_FILE = os.path.join(os.path.dirname(__file__), '..', 'credentials', 'blogg
 
 def get_credentials(credentials_file):
     """Get or refresh Google API credentials."""
+    from google.oauth2.credentials import Credentials
+    from google_auth_oauthlib.flow import InstalledAppFlow
+    from google.auth.transport.requests import Request
+
     creds = None
 
     if os.path.exists(TOKEN_FILE):
@@ -36,17 +36,16 @@ def get_credentials(credentials_file):
 
 
 def publish(title, html_content, tags, config):
-    """Publish an article to Blogger.
+    """Publish an article to Blogger."""
+    try:
+        from googleapiclient.discovery import build
+    except ImportError:
+        return {
+            'success': False,
+            'url': None,
+            'error': 'google-api-python-client not installed. Run: pip3 install google-api-python-client google-auth-oauthlib'
+        }
 
-    Args:
-        title: Article title
-        html_content: Article body as HTML
-        tags: List of tag strings
-        config: Blogger config dict with blog_id and credentials_file
-
-    Returns:
-        dict with 'success', 'url', and 'error' keys
-    """
     try:
         creds = get_credentials(config['credentials_file'])
         service = build('blogger', 'v3', credentials=creds)
